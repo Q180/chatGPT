@@ -1,16 +1,18 @@
-package com.ttpfx.utils;
+package com.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ttpfx.vo.ChatGptMessage;
-import com.ttpfx.vo.ChatGptRequestParameter;
-import com.ttpfx.vo.ChatGptResponseParameter;
-import com.ttpfx.vo.Choices;
+import com.service.vo.ChatGptMessage;
+import com.service.vo.ChatGptRequestParameter;
+import com.service.vo.ChatGptResponseParameter;
+import com.service.vo.Choices;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 
@@ -19,11 +21,10 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
-/**
- * @author ttpfx
- * @date 2023/3/23
- */
 public class CustomChatGpt {
+    private CloseableHttpClient client;
+    private String proxyIp;
+    private int proxyPort;
     /**
      * 自己chatGpt的ApiKey
      */
@@ -52,16 +53,22 @@ public class CustomChatGpt {
      */
     private int responseTimeout = 1000;
 
-    public void setResponseTimeout(int responseTimeout) {
-        this.responseTimeout = responseTimeout;
+    public CustomChatGpt() {
+        this.responseTimeout = 20000;
+        // 密钥
+        this.apiKey = "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";
+        // 设置代理IP和端口
+        this.proxyIp = "127.0.0.1";
+        this.proxyPort = 7890;
+        HttpHost proxy = new HttpHost(proxyIp, proxyPort);
+        // 创建HttpClientBuilder
+        HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+        httpClientBuilder.setProxy(proxy);
+        CloseableHttpClient httpClient = httpClientBuilder.build();
+        this.client = httpClient;
     }
 
-    public CustomChatGpt(String apiKey) {
-        this.apiKey = apiKey;
-    }
-
-    public String getAnswer(CloseableHttpClient client, String question) {
-
+    public String getAnswer(String question) {
         // 创建一个HttpPost
         HttpPost httpPost = new HttpPost(url);
         // 创建一个ObjectMapper，用于解析和创建json
@@ -118,4 +125,3 @@ public class CustomChatGpt {
         return "您当前的网络无法访问";
     }
 }
-

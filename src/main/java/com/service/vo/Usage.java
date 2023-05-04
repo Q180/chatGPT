@@ -1,13 +1,9 @@
-package com.ttpfx.vo;
+package com.service.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * @author ttpfx
- * @date 2023/3/23
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
